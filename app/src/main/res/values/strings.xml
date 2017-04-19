@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">MobAndWeb</string>
+    <string name="action_OpenGallary">Load image</string>
+    <string name="action_harris">Harris Method</string>
+    <string name="action_fast">FAST Method</string>
+    <string name="action_orb">ORB Method</string>
+    <string name="action_brief">BRIEF Method</string>
+    <string name="action_brisk">BRISK Method</string>
+    <string name="action_freak">FREAK Method</string>
+    <string name="action_targetImg">Load Target Image</string>
+    <string name="action_match">Object Finder</string>
+    <string name="list_detector">Detector Selection</string>
+    <string name="list_descriptor">Descriptor Selection</string>
+    <string name="action_native_match">Native Match</string>
+    <string name="action_native_stitch">Stich Images</string>
+    <string name="action_agast">AGAST</string>
+    <string name="action_mser">MSER</string>
+    <string name="action_gfttd">GFTTD</string>
+    <string name="action_kaze">KAZE</string>
+    <string name="action_akaze">AKAZE</string>
+    <string name="action_star">STAR</string>
+    <string name="action_siftD">SIFT</string>
+    <string name="action_surfD">SURF</string>
+    <string name="action_kazeDes">KAZE</string>
+    <string name="action_akazeDes">AKAZE</string>
+    <string name="action_orbDes">ORB</string>
+    <string name="action_lucid">LUCID</string>
+    <string name="action_latch">LATCH</string>
+    <string name="action_daisy">DAISY</string>
+    <string name="action_siftDes">SIFT</string>
+    <string name="action_surfDes">SURF</string>
+
+</resources>

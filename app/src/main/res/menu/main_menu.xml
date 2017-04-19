@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_openGallary"
+        android:orderInCategory="1"
+        android:showAsAction="never"
+        android:title="@string/action_OpenGallary"/>
+    <item
+        android:id="@+id/action_harris"
+        android:orderInCategory="2"
+        android:title="@string/action_harris">
+    </item>
+    <item
+        android:id="@+id/action_fast"
+        android:orderInCategory="3"
+        android:title="@string/action_fast">
+    </item>
+    <item
+        android:id="@+id/action_orb"
+        android:orderInCategory="4"
+        android:title="@string/action_orb">
+    </item>
+
+    <item android:orderInCategory="8" android:id="@+id/detector" android:title="@string/list_detector">
+        <menu><group android:checkableBehavior="single">
+            <item android:id="@+id/fast_check"
+                android:title="@string/action_fast" android:checked="true"/>
+            <item android:id="@+id/agastD_check"
+                android:title="@string/action_agast" />
+            <item android:id="@+id/mser_check"
+                android:title="@string/action_mser"/>
+            <item android:id="@+id/gfttd_check"
+                android:title="@string/action_gfttd" />
+            <item android:id="@+id/orbD_check"
+                android:title="@string/action_orb" />
+            <item android:id="@+id/kaze_check"
+                android:title="@string/action_kaze"/>
+            <item android:id="@+id/akaze_check"
+                android:title="@string/action_akaze" />
+            <item android:id="@+id/star_check"
+                android:title="@string/action_star" />
+            <item android:id="@+id/siftD_check"
+                android:title="@string/action_siftD" />
+            <item android:id="@+id/surfD_check"
+                android:title="@string/action_surfD" />
+        </group></menu>
+    </item>
+
+    <item android:orderInCategory="9" android:id="@+id/descriptor" android:title="@string/list_descriptor">
+        <menu><group android:checkableBehavior="single">
+            <item android:id="@+id/KAZEDes_check"
+                android:title="@string/action_kazeDes" android:checked="true"/>
+            <item android:id="@+id/AKAZEDes_check"
+                android:title="@string/action_akazeDes"/>
+            <item android:id="@+id/ORBDes_check"
+                android:title="@string/action_orbDes"/>
+            <item android:id="@+id/FREAK_check"
+                android:title="@string/action_freak"/>
+            <item android:id="@+id/BRISK_check"
+                android:title="@string/action_brisk"/>
+            <item android:id="@+id/BRIEF_check"
+                android:title="@string/action_brief"/>
+            <item android:id="@+id/LUCID_check"
+                android:title="@string/action_lucid"/>
+            <item android:id="@+id/LATCH_check"
+                android:title="@string/action_latch"/>
+            <item android:id="@+id/DAISY_check"
+                android:title="@string/action_daisy"/>
+            <item android:id="@+id/SIFTDes_check"
+                android:title="@string/action_siftDes"/>
+            <item android:id="@+id/SURFDes_check"
+                android:title="@string/action_surfDes"/>
+        </group></menu>
+    </item>
+
+    <item android:id="@+id/action_match"
+        android:orderInCategory="10"
+        android:title="@string/action_match">
+    </item>
+
+    <item
+        android:id="@+id/action_selectImgToMatch"
+        android:orderInCategory="1"
+        android:showAsAction="never"
+        android:title="@string/action_targetImg">
+    </item>
+    <item
+        android:id="@+id/action_native_match"
+        android:orderInCategory="11"
+        android:title="@string/action_native_match">
+    </item>
+    <item
+        android:id="@+id/action_native_stitcher"
+        android:orderInCategory="12"
+        android:title="@string/action_native_stitch">
+    </item>
+</menu>
