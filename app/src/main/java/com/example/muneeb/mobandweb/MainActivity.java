@@ -61,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private Mat imgToMatch;
     private int descriptorID = 1;
     private int detectorID = 1;
+    private int matcherID = 1;
+
     private String selectedImagePath;
 
     @Override
@@ -73,6 +75,21 @@ public class MainActivity extends AppCompatActivity {
         try
         {
 
+            if(id == R.id.Flann_check || id == R.id.BruteL1 || id == R.id.BruteL2 ||
+                    id == R.id.Hamming || id == R.id.HammingLUT)
+            {
+                item.setChecked(true);
+                if(id == R.id.Flann_check)
+                    matcherID = 1;
+                if(id == R.id.BruteL1)
+                    matcherID = 2;
+                if(id == R.id.BruteL2)
+                    matcherID = 3;
+                if (id == R.id.Hamming)
+                    matcherID = 4;
+                if(id == R.id.HammingLUT)
+                    matcherID = 5;
+            }
 
         if (id == R.id.fast_check || id == R.id.agastD_check || id == R.id.mser_check  || id == R.id.gfttd_check  ||
                 id == R.id.orbD_check || id == R.id.kaze_check || id == R.id.akaze_check || id == R.id.star_check ||
@@ -183,7 +200,10 @@ public class MainActivity extends AppCompatActivity {
             displayImage(finalImg);
         }
 
-        else if (id == R.id.action_fast || id == R.id.action_harris || id == R.id.action_orb)
+        else if (id == R.id.show_fast || id == R.id.show_harris || id == R.id.show_orb
+                || id == R.id.show_agast || id == R.id.show_mser || id == R.id.show_gfttd ||
+                id == R.id.show_kaze || id == R.id.show_akaze || id == R.id.show_star ||
+                id == R.id.show_sift || id == R.id.show_surf)
         {
             if(sampledImage ==null)
             {
@@ -196,131 +216,112 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
-            if(id==R.id.action_fast)
+            if (id == R.id.show_harris)
             {
+
                 Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+
                 Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
 
-                MatOfKeyPoint keyPoints=new MatOfKeyPoint();
-                FeatureDetector detector=FeatureDetector.create(FeatureDetector.FAST);
+                FindHarrisCorners(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
 
-                detector.detect(greyImage, keyPoints);
-                Features2d.drawKeypoints(greyImage, keyPoints, greyImage);
-                displayImage(greyImage);
+                displayImage(copy);
             }
-
-            else if(id== R.id.action_harris)
+            else if (id == R.id.show_fast)
             {
                 Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
 
-                MatOfKeyPoint keyPoints=new MatOfKeyPoint();
                 Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                FindFastFeatures(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
 
-                SIFT detector = SIFT.create();
-                //FeatureDetector detector = FeatureDetector.create(FeatureDetector.SIFT);
-                detector.detect(greyImage, keyPoints);
-
-                Features2d.drawKeypoints(greyImage, keyPoints, greyImage);
-
-                displayImage(greyImage);
-
+                displayImage(copy);
             }
-
-            else if(id==R.id.action_orb)
+            else if (id == R.id.show_orb)
             {
                 Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
                 Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
-                MatOfKeyPoint keyPoints=new MatOfKeyPoint();
-
-                FeatureDetector detector = FeatureDetector.create(FeatureDetector.ORB);
-
-                detector.detect(greyImage, keyPoints);
-                Features2d.drawKeypoints(greyImage, keyPoints, greyImage);
-                displayImage(greyImage);
-
+                FindORBFeatures(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+                displayImage(copy);
             }
 
-        }
-
-        else if(id==R.id.action_match)
-        {
-            if(sampledImage==null || imgToMatch==null)
+            else if (id == R.id.show_agast)
             {
-                Context context = getApplicationContext();
-                CharSequence text = "You need to load an object and a scene to match!";
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
-                return true;
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                AgastFeatures(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+
+                displayImage(copy);
             }
 
-            int maximumNuberOfMatches=50;
-            Mat greyImage=new Mat();
-            Mat greyImageToMatch=new Mat();
-
-            Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
-            Imgproc.cvtColor(imgToMatch, greyImageToMatch, Imgproc.COLOR_RGB2GRAY);
-
-            MatOfKeyPoint keyPoints=new MatOfKeyPoint();
-            MatOfKeyPoint keyPointsToMatch=new MatOfKeyPoint();
-
-            FeatureDetector detector=FeatureDetector.create(detectorID);
-            detector.detect(greyImage, keyPoints);
-            detector.detect(greyImageToMatch, keyPointsToMatch);
-
-
-            DescriptorExtractor dExtractor = DescriptorExtractor.create(DescriptorExtractor.BRISK);
-            Mat descriptors=new Mat();
-            Mat descriptorsToMatch=new Mat();
-
-            dExtractor.compute(greyImage, keyPoints, descriptors);
-            dExtractor.compute(greyImageToMatch, keyPointsToMatch, descriptorsToMatch);
-
-            DescriptorMatcher matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
-            MatOfDMatch matches=new MatOfDMatch();
-            matcher.match(descriptorsToMatch,descriptors,matches);
-
-            ArrayList<DMatch> goodMatches=new ArrayList<DMatch>();
-            List<DMatch> allMatches=matches.toList();
-
-            double minDist = 100;
-            for( int i = 0; i < descriptorsToMatch.rows(); i++ )
+            else if (id == R.id.show_mser)
             {
-                double dist = (double)(allMatches.get(i)).distance;
-                if( dist < minDist )
-                    minDist = dist;
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                MserFeatures(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+
+                displayImage(copy);
             }
 
-            for( int i = 0; i < descriptorsToMatch.rows() && goodMatches.size()<maximumNuberOfMatches; i++ )
+            else if (id == R.id.show_gfttd)
             {
-                if(allMatches.get(i).distance<= 2*minDist)
-                {
-                    goodMatches.add(allMatches.get(i));
-                }
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                GfttdFeatures(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+
+                displayImage(copy);
+            }
+            else if (id == R.id.show_kaze)
+            {
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                Kaze(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+
+                displayImage(copy);
+            }
+            else if (id == R.id.show_akaze)
+            {
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                AKaze(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+                displayImage(copy);
+            }
+            else if (id == R.id.show_star)
+            {
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                Star(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+                displayImage(copy);
+            }
+            else if (id == R.id.show_sift)
+            {
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                Sift(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+                displayImage(copy);
+            }
+            else if (id == R.id.show_surf)
+            {
+                Mat greyImage=new Mat();
+                Mat copy = sampledImage.clone();
+                Imgproc.cvtColor(sampledImage, greyImage, Imgproc.COLOR_RGB2GRAY);
+                Sift(greyImage.getNativeObjAddr(),copy.getNativeObjAddr());
+                displayImage(copy);
             }
 
-            MatOfDMatch goodEnough=new MatOfDMatch();
-            goodEnough.fromList(goodMatches);
-            Mat finalImg=new Mat();
-            Features2d.drawMatches(greyImageToMatch, keyPointsToMatch, greyImage, keyPoints, goodEnough, finalImg, Scalar.all(-1), Scalar.all(-1),new MatOfByte(), Features2d.DRAW_RICH_KEYPOINTS + Features2d.NOT_DRAW_SINGLE_POINTS);
-
-            displayImage(finalImg);
         }
 
         else if(id==R.id.action_native_match)
         {
-            //FeatureDetector.AKAZE;
-
-            if(detectorID==FeatureDetector.HARRIS)
-            {
-                Context context = getApplicationContext();
-                CharSequence text = "Not a valid option for native matching";
-                int duration = Toast.LENGTH_SHORT;
-
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
-                return true;
-            }
             if(sampledImage==null || imgToMatch==null)
             {
                 Context context = getApplicationContext();
@@ -333,10 +334,45 @@ public class MainActivity extends AppCompatActivity {
             }
             Mat finalImg=new Mat();
 
-            FindMatches(imgToMatch.getNativeObjAddr(),sampledImage.getNativeObjAddr(),detectorID,descriptorID,finalImg.getNativeObjAddr());
+            FindMatches(imgToMatch.getNativeObjAddr(),sampledImage.getNativeObjAddr(),detectorID,descriptorID,matcherID,finalImg.getNativeObjAddr());
 
             displayImage(finalImg);
         }
+        else if(id==R.id.action_native_stitcher)
+        {
+            if(sampledImage==null || imgToMatch==null)
+            {
+                Context context = getApplicationContext();
+                CharSequence text = "You need to load an two scenes!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+                return true;
+            }
+            Mat finalImg=new Mat();
+            Stitch(imgToMatch.getNativeObjAddr(),sampledImage.getNativeObjAddr(),finalImg.getNativeObjAddr());
+            displayImage(finalImg);
+        }
+        else if(id==R.id.action_custom_stitcher)
+        {
+            if(sampledImage==null || imgToMatch==null)
+            {
+                Context context = getApplicationContext();
+                CharSequence text = "You need to load an two scenes!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+                return true;
+            }
+
+            Mat finalImg=new Mat();
+            NativeStich(imgToMatch.getNativeObjAddr(),sampledImage.getNativeObjAddr(),detectorID,descriptorID,finalImg.getNativeObjAddr());
+            displayImage(finalImg);
+
+        }
+
         }
         catch (Throwable e)
         {
@@ -541,8 +577,19 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native void FindMatches(long objectAddress, long sceneAddress,int detectorID, int descriptorID,long matchingResult);
+    public native void FindMatches(long objectAddress, long sceneAddress,int detectorID, int descriptorID,int matcherID, long matchingResult);
     public native void Stitch(long sceneOneAddress, long sceneTwoAddress,long stitchingResult);
-
+    public native void NativeStich(long objectAddress, long sceneAddress,int detectorID, int descriptorID,long matchingResult);
+    public native void FindHarrisCorners( long addrGray, long addrRgba);
+    public native void FindFastFeatures( long addrGray, long addrRgba);
+    public native void FindORBFeatures( long addrGray, long addrRgba);
+    public native void AgastFeatures( long addrGray, long addrRgba);
+    public native void MserFeatures( long addrGray, long addrRgba);
+    public native void GfttdFeatures( long addrGray, long addrRgba);
+    public native void Kaze( long addrGray, long addrRgba);
+    public native void AKaze( long addrGray, long addrRgba);
+    public native void Star( long addrGray, long addrRgba);
+    public native void Sift( long addrGray, long addrRgba);
+    public native void Surf( long addrGray, long addrRgba);
 
 }
